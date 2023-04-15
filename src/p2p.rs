@@ -1,7 +1,8 @@
 use warp::{Filter, Reply, Rejection};
 use serde::{Serialize, Deserialize};
+use std::net::SocketAddr;
 
-type Result<T> = std::result::Result<T, Rejection>;
+//type Result<T> = std::result::Result<T, Rejection>;
 #[allow(non_snake_case)]
 #[derive(Serialize)]
 pub struct ResponseBody1 {
@@ -40,8 +41,10 @@ pub struct Entries{
 }
 
 #[tokio::main]
-pub async fn p2p(socket: SocketAddr) {
+pub async fn p2p(socket: &SocketAddr) -> Result<u32, u32> {
+    println!("p2p called with {:?}", socket);
 
+    //let socket_addr: SocketAddr = socket.parse().unwrap();
     let route_req_vote = warp::path("requestVote")
         .and(warp::post())
         .and(warp::body::json())
@@ -71,12 +74,14 @@ pub async fn p2p(socket: SocketAddr) {
             .or(route_execute_command)
     );
     warp::serve(routes)
-        .run(socket)
+        //.run(([127, 0, 0, 1 ], 3031))
+        .run(*socket)
         .await;
+    Ok(32)
 }
 
 
-pub async fn handler_request_vote(body: RequestVote) -> Result<impl Reply> {
+pub async fn handler_request_vote(body: RequestVote) -> Result<impl Reply, Rejection> {
     let response_body = ResponseBody1 {
         term: body.term,
         voteGranted: true
@@ -85,7 +90,7 @@ pub async fn handler_request_vote(body: RequestVote) -> Result<impl Reply> {
     Ok(warp::reply::json(&response_body))
 }
 
-pub async fn handler_append_entries(body: AppendEntries) -> Result<impl Reply> {
+pub async fn handler_append_entries(body: AppendEntries) -> Result<impl Reply, Rejection> {
     let response_body = ResponseBody2 {
         term: body.term,
         success: true
