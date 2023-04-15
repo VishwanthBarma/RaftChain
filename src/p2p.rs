@@ -40,7 +40,7 @@ pub struct Entries{
 }
 
 #[tokio::main]
-pub async fn p2p() {
+pub async fn p2p(socket: SocketAddr) {
 
     let route_req_vote = warp::path("requestVote")
         .and(warp::post())
@@ -71,7 +71,7 @@ pub async fn p2p() {
             .or(route_execute_command)
     );
     warp::serve(routes)
-        .run(([127, 0, 0, 1 ], 3031))
+        .run(socket)
         .await;
 }
 

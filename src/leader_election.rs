@@ -86,7 +86,7 @@ impl Raft {
             last_log_index: self.log.len() as u64,
             last_log_term: self.current_term,
         };
-    }
 
-    
+        // satisfy 5 contrains with all node exculding self node.
+    }
 }
