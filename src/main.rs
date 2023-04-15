@@ -8,10 +8,7 @@ pub struct Block {
     pub previous_hash: String,
     pub timestamp: i64,
     pub data: String,
-    pub nonce: u64,
 }
-
-const DIFFICULTY_LEVEL: &str = "00";
 
 fn convert_hash_to_binary(hash: &[u8]) -> String {
     let mut result: String = String::default();
@@ -34,7 +31,6 @@ impl Blockchain{
             timestamp: Utc::now().timestamp(),
             previous_hash: String::from("CodeX"),
             data: String::from("CodeX!"),
-            nonce: 2023,
             hash: "08aaa69a539990898e95f843c04657531d79df9de0beafed85ae4e2e7df22636".to_string(),
         };
         self.blocks.push(genesis_block)
@@ -43,13 +39,6 @@ impl Blockchain{
     fn is_block_valid(&self, block: &Block, previous_block: &Block) -> bool {
         if block.previous_hash != previous_block.hash {
             warn!("Incorrect: Block with id- {} has wrong hash.", block.id);
-            return false;
-        } else if !convert_hash_to_binary(
-            &hex::decode(&block.hash).expect("Unable to decode from hex"),
-        )
-        .starts_with(DIFFICULTY_LEVEL)
-        {
-            warn!("Block with id: {} has invalid difficulty level", block.id);
             return false;
         } else if block.id != previous_block.id + 1 {
             warn!(
@@ -65,7 +54,6 @@ impl Blockchain{
             block.timestamp,
             &block.previous_hash,
             &block.data,
-            block.nonce,
         )) != block.hash
         {
             warn!("Block with id: {} has invalid hash", block.id);
