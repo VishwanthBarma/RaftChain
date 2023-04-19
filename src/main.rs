@@ -1,5 +1,5 @@
 pub struct Blockchain {
-    pub blocks: Vec,
+    pub blocks: Vec<T>,
 }
 
 pub struct Block {
@@ -20,12 +20,12 @@ fn convert_hash_to_binary(hash: &[u8]) -> String {
 
 // TODO: fn - Litecoin_hash for calculating hash.
 
-impl Blockchain{
-    fn new() -> Self{
-        Self { blocks: vec![]}
+impl Blockchain {
+    fn new() -> Self {
+        Self { blocks: vec![] }
     }
 
-    fn genesis(&mut self){
+    fn genesis(&mut self) {
         let genesis_block = Block {
             id: 0,
             timestamp: Utc::now().timestamp(),
@@ -46,9 +46,8 @@ impl Blockchain{
                 block.id, previous_block.id
             );
             return false;
-            
-            // calculate hash -> Litecoin_hash
 
+            // calculate hash -> Litecoin_hash
         } else if hex::encode(calculate_hash(
             block.id,
             block.timestamp,
@@ -75,11 +74,11 @@ impl Blockchain{
         }
         true
     }
-    
+
     fn select_chain(&mut self, local: Vec, remote: Vec) -> Vec {
         let is_local_valid = self.is_chain_valid(&local);
         let is_remote_valid = self.is_chain_valid(&remote);
-        
+
         if is_local_valid && is_remote_valid {
             if local.len() >= remote.len() {
                 local
@@ -94,5 +93,4 @@ impl Blockchain{
             panic!("Local and remote chains are invalid");
         }
     }
-
 }
